@@ -20,7 +20,9 @@ func main() {
 	servicesConfig := handlers.ServicesStruct{}
 
 	router := gin.Default()
-	_ = handlers.NewGatewayService(&servicesConfig)
+	gs := handlers.NewGatewayService(&servicesConfig)
+
+	router.GET("/manage/health", gs.CheckHealth)
 
 	log.Println("Server is listening on port: ", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
