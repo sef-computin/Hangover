@@ -28,4 +28,5 @@ func main() {
 
 	log.Println("Server is listening on port: ", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
+
 }
