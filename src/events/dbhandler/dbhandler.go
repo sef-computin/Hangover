@@ -2,12 +2,14 @@ package dbhandler
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
+
+	"github.com/sef-comp/Hangover/events/models"
 )
 
 type EventDB interface {
 	GetAllEvents() ([]*models.Event, error)
+	CreateEvent(*models.Event) error
 }
 
 type DBHandler struct {
@@ -34,7 +36,7 @@ func (dbhand *DBHandler) GetAllEvents() ([]*models.Event, error) {
 
 	for rows.Next() {
 		f := new(models.Event)
-		if err := rows.Scan(&f.EventID, &f.EventName, &f.StartDt, &f.EndDt, &f.IsPublic, &f.Description, &f.Geolng, &f.Geoltd); err != nil {
+		if err := rows.Scan(&f.EventID, &f.EventName, &f.StartDt, &f.FinishDt, &f.IsPublic, &f.Description, &f.Geolng, &f.Geolat); err != nil {
 			return nil, fmt.Errorf("failed to execute the query: %w", err)
 		}
 		events = append(events, f)
@@ -45,3 +47,19 @@ func (dbhand *DBHandler) GetAllEvents() ([]*models.Event, error) {
 	return events, nil
 }
 
+func (dbhand *DBHandler) CreateEvent(event *models.Event) error {
+
+	_, err := dbhand.db.Query(
+		`INSERT INTO business.events (event_id, event_name, is_public, start_dt, finish_dt, description, geolat, geolng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
+		event.EventID,
+		event.EventName,
+		event.IsPublic,
+		event.StartDt,
+		event.FinishDt,
+		event.Description,
+		event.Geolat,
+		event.Geolng,
+	)
+
+	return err
+}
