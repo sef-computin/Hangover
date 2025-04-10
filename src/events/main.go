@@ -45,6 +45,7 @@ func main() {
 
 	router.GET("/api/v1/events", events_handler.GetAllEventsHandler)
 	router.POST("/api/v1/events", events_handler.CreateNewEventHandler)
+	router.DELETE("/api/v1/events/:event_id", events_handler.DeleteEventHandler)
 
 	log.Println("Server is listening on port: ", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
