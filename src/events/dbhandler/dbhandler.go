@@ -10,6 +10,7 @@ import (
 type EventDB interface {
 	GetAllEvents() ([]*models.Event, error)
 	CreateEvent(*models.Event) error
+	DeleteEventByID(string) error
 }
 
 type DBHandler struct {
@@ -61,5 +62,13 @@ func (dbhand *DBHandler) CreateEvent(event *models.Event) error {
 		event.Geolng,
 	)
 
+	return err
+}
+
+func (dbhand *DBHandler) DeleteEventByID(event_id string) error {
+	_, err := dbhand.db.Query(
+		`DELETE FROM business.events WHERE event_id=$1`,
+		event_id,
+	)
 	return err
 }

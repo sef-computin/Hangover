@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -37,12 +38,21 @@ func (h *EventHandler) CreateNewEventHandler(c *gin.Context) {
 		return
 	}
 
-	if err := h.DBHandler.CreateEvent(&Event); err != nil {
+	if err := h.DBHandler.CreateEvent(&event); err != nil {
 		log.Printf("Failed to create event: %s", err)
 		c.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
+	c.IndentedJSON(http.StatusOK, nil)
+}
+
+func (h *EventHandler) DeleteEventHandler(c *gin.Context){
+	event_id := c.Param("event_id")
+	err := h.DBHandler.DeleteEventByID(event_id)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, nil)
+	}
 	c.IndentedJSON(http.StatusOK, nil)
 }
 
