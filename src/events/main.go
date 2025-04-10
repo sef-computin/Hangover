@@ -2,15 +2,16 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
-
+  _ "github.com/lib/pq"
 	"github.com/gin-gonic/gin"
 	"github.com/sef-comp/Hangover/events/dbhandler"
 	"github.com/sef-comp/Hangover/events/handlers"
 )
+
+
 
 func main() {
 	port := os.Getenv("PORT")
@@ -19,7 +20,7 @@ func main() {
 		port = "8080"
 	}
 
-	dbURL, err := get_DB_creds()
+	dbURL, err := getDatabaseCreds()
 	if err != nil{
 		panic(err)
 	}
@@ -33,6 +34,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	log.Println("Connected to DB")
 
   events_handler := handlers.NewEventHandler(dbhandler.InitDBHandler(db))
 
@@ -48,10 +51,3 @@ func main() {
 	
 }
 
-func get_DB_creds() (string, error){
-	var host, user, dbname, password string
-	var port int
- 	dbURL := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		host, port, user, dbname, password)	
-	return dbURL, nil
-}
