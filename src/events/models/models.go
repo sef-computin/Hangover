@@ -2,12 +2,10 @@ package models
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Event struct {
-	EventID     uuid.UUID `json:"event_id"`
+	EventID     string	  `json:"event_id"`
 	EventName   string    `json:"event_name"`
 	IsPublic 	  bool		  `json:"is_public"`
 	StartDt		  time.Time `json:"start_dt"`
