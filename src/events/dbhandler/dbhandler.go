@@ -37,7 +37,7 @@ func (dbhand *DBHandler) GetAllEvents() ([]*models.Event, error) {
 
 	for rows.Next() {
 		f := new(models.Event)
-		if err := rows.Scan(&f.EventID, &f.EventName, &f.StartDt, &f.FinishDt, &f.IsPublic, &f.Description, &f.Geolng, &f.Geolat); err != nil {
+		if err := rows.Scan(&f.EventID, &f.EventName, &f.IsPublic, &f.StartDt, &f.FinishDt, &f.Description, &f.City, &f.Geolng, &f.Geolat); err != nil {
 			return nil, fmt.Errorf("failed to execute the query: %w", err)
 		}
 		events = append(events, f)
@@ -51,13 +51,14 @@ func (dbhand *DBHandler) GetAllEvents() ([]*models.Event, error) {
 func (dbhand *DBHandler) CreateEvent(event *models.Event) error {
 
 	_, err := dbhand.db.Query(
-		`INSERT INTO business.events (event_id, event_name, is_public, start_dt, finish_dt, description, geolat, geolng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
+		`INSERT INTO business.events (event_id, event_name, is_public, start_dt, finish_dt, description, city, geolat, geolng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;`,
 		event.EventID,
 		event.EventName,
 		event.IsPublic,
 		event.StartDt,
 		event.FinishDt,
 		event.Description,
+		event.City,
 		event.Geolat,
 		event.Geolng,
 	)
