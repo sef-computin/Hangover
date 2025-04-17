@@ -19,6 +19,18 @@ func NewEventHandler(db dbhandler.EventDB) *EventHandler{
 }
 
 
+func (h *EventHandler) GetAllEventsWithParams(c *gin.Context){
+	params := make(map[string]any)
+
+	events, err := h.DBHandler.GetEventsWithParams(params)
+	if err != nil{
+		log.Printf("failed to get events: %s", err)
+		c.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, events)
+}
+
 func (h *EventHandler) GetAllEventsHandler(c *gin.Context) {
 	events, err := h.DBHandler.GetAllEvents()
 	if err != nil{

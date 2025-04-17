@@ -17,7 +17,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = "8080"
+		port = "8060"
 	}
 
 	dbURL, err := getDatabaseCreds()
@@ -43,7 +43,7 @@ func main() {
 
 	router.GET("/manage/health", events_handler.CheckHealth)
 
-	router.GET("/api/v1/events", events_handler.GetAllEventsHandler)
+	router.GET("/api/v1/events", events_handler.GetAllEventsWithParams)
 	router.POST("/api/v1/events", events_handler.CreateNewEventHandler)
 	router.DELETE("/api/v1/events/:event_id", events_handler.DeleteEventHandler)
 
