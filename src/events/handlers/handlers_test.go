@@ -17,7 +17,7 @@ func SetUpRouter() *gin.Engine {
 	return router
 }
 
-func TestGetAllFlights(t *testing.T) {
+func TestGetAllEvents(t *testing.T) {
 	gin.SetMode(gin.ReleaseMode)
 
 	type mockBehaviour func(r *mock_dbhandler.MockEventDB, record []*models.Event)
@@ -53,7 +53,7 @@ func TestGetAllFlights(t *testing.T) {
 			r.GET("/events", handler.GetAllEventsHandler)
 
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("GET", "/flights", nil)
+			req := httptest.NewRequest("GET", "/events", nil)
 			req.Header.Set("X-User-Name", test.username)
 
 			r.ServeHTTP(w, req)
