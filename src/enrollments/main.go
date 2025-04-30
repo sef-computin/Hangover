@@ -45,7 +45,8 @@ func main(){
 	router.GET("/manage/health", enrollments_handler.CheckHealth)
 
 	router.GET("/api/v1/enrollments", enrollments_handler.GetAllEnrollments)
-	router.POST("/api/v1/enrollments/:eventID/enroll/:userID", enrollments_handler.Enroll)
+	router.POST("/api/v1/enrollments/new/:event_id/:user_id", enrollments_handler.Enroll)
+	router.POST("/api/v1/enrollments/cancel/:enrollment_id", enrollments_handler.CancelEnroll)
 
 	log.Println("Server is listening on port: ", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))

@@ -106,7 +106,7 @@ func (dbh *DBHandler) Enroll(user_id, event_id uuid.UUID) (uuid.UUID, error){
 		return uuid.UUID{}, err
 	}
 	_, err = dbh.db.Query(
-		`INSERT INTO business.enrollments (enroll_id, event_id, user_id, status) VALUES ($1, $2, $3, $4);`,
+		`INSERT INTO business.enrolments (enroll_id, event_id, user_id, status) VALUES ($1, $2, $3, $4);`,
 		enrollment_id,
 		event_id,
 		user_id,
@@ -119,5 +119,12 @@ func (dbh *DBHandler) Enroll(user_id, event_id uuid.UUID) (uuid.UUID, error){
 }
 
 func (dbh *DBHandler) CancelEnroll(enrollment_id uuid.UUID) error{
-	return nil
+
+	_, err := dbh.db.Query(
+		`UPDATE business.enrolments SET status = $1 WHERE enroll_id = $2;`,
+		models.ENROLLMENT_STATUS_CANCELLED,
+		enrollment_id,
+	)
+
+	return err
 }
