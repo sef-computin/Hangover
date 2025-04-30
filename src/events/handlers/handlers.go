@@ -21,6 +21,12 @@ func NewEventHandler(db dbhandler.EventDB) *EventHandler{
 
 func (h *EventHandler) GetAllEventsWithParams(c *gin.Context){
 	params := make(map[string]any)
+	
+  for key, values := range c.Request.URL.Query(){
+		for _, val := range values{
+	 		params[key] = val
+		}
+  }
 
 	events, err := h.DBHandler.GetEventsWithParams(params)
 	if err != nil{
