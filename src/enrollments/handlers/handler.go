@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sef-comp/Hangover/enrollments/dbhandler"
 )
 
@@ -28,8 +29,24 @@ func (h *EnrollmentHandler) GetAllEnrollments(c *gin.Context){
 	c.IndentedJSON(http.StatusOK, events)
 }
 
+func (h *EnrollmentHandler) Enroll(c *gin.Context){
+	eventID, err := uuid.Parse(c.Param("eventID"))
+	if err != nil{
+		c.Status(http.StatusBadRequest)
+	}
+	userID, err := uuid.Parse(c.Param("userID"))
+	if err != nil{
+		c.Status(http.StatusBadRequest)
+	}
+	enrollment_id, err := h.DBHandler.Enroll(userID, eventID)
+	if err != nil{
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.Data(http.StatusOK, "text/plain", []byte(enrollment_id.String()))
+}
+
 func (h *EnrollmentHandler) CheckHealth(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
-
 
