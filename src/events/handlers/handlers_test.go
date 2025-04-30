@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -67,6 +68,52 @@ func TestGetAllEvents(t *testing.T) {
 	}
 }
 
+func TestDeleteEvent(t *testing.T){
+	gin.SetMode(gin.ReleaseMode)
+
+	type mockBehaviour func(r *mock_dbhandler.MockEventDB, eventID string)
+	tests := []struct {
+		name                 string
+		username             string
+		mockBehaviour        mockBehaviour
+		expectedStatusCode   int
+		expectedResponseBody string
+	}{
+		{
+			name: "Ok",
+			mockBehaviour: func(r *mock_dbhandler.MockEventDB, eventID string) {
+				r.EXPECT().DeleteEventByID(eventID)
+			},
+			expectedStatusCode: http.StatusOK,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			eventID, _ := uuid.NewRandom()
+
+			dbhandler := mock_dbhandler.NewMockEventDB(c)
+			test.mockBehaviour(dbhandler, eventID.String())
+
+			handler := EventHandler{DBHandler: dbhandler}
+
+			r := gin.New()
+			r.DELETE("/events/:event_id", handler.DeleteEventHandler)
+
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest("DELETE", fmt.Sprintf("/events/%s", eventID), nil)
+			req.Header.Set("X-User-Name", test.username)
+
+			r.ServeHTTP(w, req)
+
+			assert.Equal(t, w.Code, test.expectedStatusCode)
+		})
+	}
+
+}
 func TestCreateNewEvent(t *testing.T){
 	gin.SetMode(gin.ReleaseMode)
 
